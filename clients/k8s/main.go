@@ -6,6 +6,10 @@ type Client interface {
 
 type clientImpl struct{}
 
+func New(addr string) Client {
+	return &clientImpl{}
+}
+
 func (clientImpl) Namespaces() ([]string, error) {
 	//TODO implement me
 	panic("implement me")
