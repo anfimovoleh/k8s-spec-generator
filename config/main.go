@@ -3,7 +3,7 @@ package config
 import "github.com/anfimovoleh/k8s-spec-generator/clients/k8s"
 
 type Config interface {
-	K8S() k8s.Client
+	K8S(kubeConfig string) k8s.Client
 }
 
 type configImpl struct {

@@ -3,25 +3,25 @@ package config
 import (
 	"log"
 
+	"k8s.io/client-go/tools/clientcmd"
+
 	"github.com/anfimovoleh/k8s-spec-generator/clients/k8s"
-	"github.com/caarlos0/env"
 )
 
-type K8S struct {
-	Host string `env:"K8S_GEN_API_HOST,required"`
-	Port int    `env:"K8S_GEN_API_PORT,required"`
-}
-
-func (c *configImpl) K8S() k8s.Client {
+func (c *configImpl) K8S(kubeConfig string) k8s.Client {
 	if c.k8sClient != nil {
 		return c.k8sClient
 	}
 
-	k8sConfig := &K8S{}
-	if err := env.Parse(k8sConfig); err != nil {
-		log.Fatalln("failed to read kubernetes configuration:", err)
+	config, err := clientcmd.BuildConfigFromFlags("", kubeConfig)
+	if err != nil {
+		log.Fatalln("failed to build kubeconfig:", err)
 	}
 
-	c.k8sClient = k8s.New("")
+	c.k8sClient, err = k8s.New(config)
+	if err != nil {
+		log.Fatalln("failed to kubernetes initialize client:", err)
+	}
+
 	return c.k8sClient
 }
